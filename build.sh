@@ -15,4 +15,4 @@ $CC -g -shared -static -o release/steamclient64.dll steamclient.o log.o -Lminhoo
 
 cp minhook_1.3.3/bin/MinHook.x86.dll release/
 cp minhook_1.3.3/bin/MinHook.x64.dll release/
-
+cp LICENSE release
