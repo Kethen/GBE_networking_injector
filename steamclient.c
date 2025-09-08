@@ -98,6 +98,9 @@ void redirect_functions(){
 
 	goldberg = LoadLibraryA("goldberg.bsi");
 	if (goldberg == NULL){
+		goldberg = LoadLibraryA("goldberg64.bsi");
+	}
+	if (goldberg == NULL){
 		LOG("%s: failed loading goldberg.bsi, terminating\n", __func__);
 		exit(1);
 	}
