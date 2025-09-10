@@ -1,5 +1,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+
 #include <pthread.h>
 #include <time.h>
 
@@ -13,7 +16,7 @@ HMODULE goldberg = NULL;
 HMODULE steam_api = NULL;
 
 #define CALLBACK_THREAD_OVERRIDE 0
-#define CALLBACK_THREAD_RATE 240
+#define CALLBACK_THREAD_RATE 75
 
 unsigned int (*SteamAPI_Init_orig)() = NULL;
 unsigned int (*SteamAPI_Init_gb)() = NULL;
@@ -237,9 +240,29 @@ void *CreateInterface(const char *pName, int *pReturnCode)
     return client;
 }
 
+void asi_loader(){
+	DIR *cwd = opendir("./");
+	while(true){
+		struct dirent *entry = readdir(cwd);
+		if (entry == NULL){
+			break;
+		}
+		int name_len = strlen(entry->d_name);
+		if (name_len < 4){
+			continue;
+		}
+		if (strcmp(&entry->d_name[name_len - 4], ".csi") == 0){
+			HMODULE asi_mod = LoadLibraryA(entry->d_name);
+			LOG("%s: found %s, load status 0x%x\n", __func__, entry->d_name, asi_mod);
+		}
+	}
+	closedir(cwd);
+}
+
 __attribute__((constructor))
 int init(){
 	log_init();
 	LOG("%s: module loaded\n", __func__);
 	redirect_functions();
+	asi_loader();
 }
